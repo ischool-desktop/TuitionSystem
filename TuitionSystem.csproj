@@ -1,0 +1,400 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A7E92539-916B-4390-A237-993E97E1B2D4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TuitionSystem</RootNamespace>
+    <AssemblyName>TuitionSystem</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>發行\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Ischool_AE\modules\plugin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\iSchoolOnFisca\modules\plugin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AccountsReceivable.ReceiptUtility">
+      <HintPath>..\..\..\Ischool_AE\modules\plugin\AccountsReceivable.ReceiptUtility.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Aspose.BarCode">
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\Aspose.BarCode.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Aspose.Cells">
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\Aspose.Cells.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Aspose.Words">
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\Aspose.Words.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DevComponents.DotNetBar2">
+      <HintPath>..\..\..\Ischool_AE\components\DevComponents.DotNetBar2.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FISCA">
+      <HintPath>..\..\..\Ischool_AE\kernel\FISCA.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FISCA.Permission, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ischool_AE\kernel\FISCA.Permission.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FISCA.Presentation, Version=1.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ischool_AE\kernel\FISCA.Presentation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="FISCA.UDT">
+      <HintPath>..\..\..\Ischool_AE\kernel\FISCA.UDT.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\Framework.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="K12.Data, Version=1.0.2.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\K12.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="K12.Presentation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\K12.Presentation.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SHSchool.Data, Version=1.8.0.4, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\SHSchool.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SmartSchool.AccessControl, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\SmartSchool.AccessControl.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="SmartSchool.Core, Version=1.0.2.2, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\SmartSchool.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\ChargeItem.cs" />
+    <Compile Include="Data\GlobalValue.cs" />
+    <Compile Include="Data\StudentTuition.cs" />
+    <Compile Include="Data\TuitionDetail.cs" />
+    <Compile Include="Data\TuitionStandard.cs" />
+    <Compile Include="Data\TuitionChangeStd.cs" />
+    <Compile Include="Data\TuitionStandardDAO.cs" />
+    <Compile Include="Data\TuitionDetailDAO.cs" />
+    <Compile Include="Data\TuitionChangeStdDAO.cs" />
+    <Compile Include="Data\ChargeItemDAO.cs" />
+    <Compile Include="Data\StudentTuitionDAO.cs" />
+    <Compile Include="PaymentList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PaymentList.Designer.cs">
+      <DependentUpon>PaymentList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ListViewEX.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OpenMode.cs" />
+    <Compile Include="PermRecRegReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PermRecRegReport.Designer.cs">
+      <DependentUpon>PermRecRegReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PermRec_Tuition.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PermRec_Tuition.Designer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="PaymentList.resx">
+      <DependentUpon>PaymentList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PermRecRegReport.resx">
+      <DependentUpon>PermRecRegReport.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PermRec_Tuition.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StudentTuitionProcess.resx">
+      <DependentUpon>StudentTuitionProcess.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionChangeList.resx">
+      <DependentUpon>TuitionChangeList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\ChargeItem_Process.resx">
+      <DependentUpon>ChargeItem_Process.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\SetCurrentSemester.resx">
+      <DependentUpon>SetCurrentSemester.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionStandardCopy.resx">
+      <DependentUpon>TuitionStandardCopy.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionStandardProcess.resx">
+      <DependentUpon>TuitionStandardProcess.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionChangeStdProcess.resx">
+      <DependentUpon>TuitionChangeStdProcess.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionChangeStdCopy.resx">
+      <DependentUpon>TuitionChangeStdCopy.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionDetailSheet_P.resx">
+      <DependentUpon>TuitionDetailSheet_P.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\DataSources\TuitionSystem.Data.ChargeItemRecord.datasource" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="SetTuition.cs" />
+    <Compile Include="StudentTuitionProcess.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StudentTuitionProcess.Designer.cs">
+      <DependentUpon>StudentTuitionProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\ChargeItem_Process.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\ChargeItem_Process.Designer.cs">
+      <DependentUpon>ChargeItem_Process.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionChangeList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionChangeList.Designer.cs">
+      <DependentUpon>TuitionChangeList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\SetCurrentSemester.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\SetCurrentSemester.Designer.cs">
+      <DependentUpon>SetCurrentSemester.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionStandardCopy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionStandardCopy.Designer.cs">
+      <DependentUpon>TuitionStandardCopy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionStandardProcess.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionStandardProcess.Designer.cs">
+      <DependentUpon>TuitionStandardProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeStdProcess.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeStdProcess.Designer.cs">
+      <DependentUpon>TuitionChangeStdProcess.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeStdCopy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeStdCopy.Designer.cs">
+      <DependentUpon>TuitionChangeStdCopy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionDetailSheet_P.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionDetailSheet_P.designer.cs">
+      <DependentUpon>TuitionDetailSheet_P.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionReport.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Cash-sheet.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\DataSources\TuitionSystem.Data.TuitionChangeStdRecord.datasource" />
+    <None Include="Properties\DataSources\TuitionSystem.Data.TuitionDetailRecord.datasource" />
+    <None Include="Properties\DataSources\TuitionSystem.Data.TuitionStandardRecord.datasource" />
+    <None Include="Properties\DataSources\TuitionSystem.Data.TuitionStandardRecord1.datasource" />
+    <None Include="Resources\invoice.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\j0439824.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Money.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bank_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\list_icon.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tag-ToDo-List_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder_red_mydocuments.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\MoneyTransportation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\記帳_小.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Bank-64.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\icon084.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Library\AccountsReceivable.ReceiptUtility.dll" />
+    <Content Include="Library\AccountsReceivable.ReceiptUtility.pdb" />
+    <Content Include="Library\Aspose.BarCode.dll" />
+    <Content Include="Library\Aspose.BarCode.xml" />
+    <Content Include="Library\Aspose.Cells.dll" />
+    <Content Include="Library\Aspose.Words.dll" />
+    <Content Include="Library\Campus.Configuration.dll" />
+    <Content Include="Library\Campus.DocumentValidator.dll" />
+    <Content Include="Library\Campus.Import.dll" />
+    <Content Include="Library\Campus.Report.dll" />
+    <Content Include="Library\Campus.Validator.dll" />
+    <Content Include="Library\Campus.Windows.dll" />
+    <Content Include="Library\DevComponents.DotNetBar2.dll" />
+    <Content Include="Library\FISCA.Authentication.dll" />
+    <Content Include="Library\FISCA.Data.dll" />
+    <Content Include="Library\FISCA.dll" />
+    <Content Include="Library\FISCA.DSAClient.dll" />
+    <Content Include="Library\FISCA.DSAClient.xml" />
+    <Content Include="Library\FISCA.DSAUtil.dll" />
+    <Content Include="Library\FISCA.DSAUtil.xml" />
+    <Content Include="Library\FISCA.LogAgent.dll" />
+    <Content Include="Library\FISCA.Permission.dll" />
+    <Content Include="Library\FISCA.Presentation.dll" />
+    <Content Include="Library\FISCA.UDT.dll" />
+    <Content Include="Library\Framework.dll" />
+    <Content Include="Library\Framework.pdb" />
+    <Content Include="Library\IntelliSchool.DSA.ClientFramework.dll" />
+    <Content Include="Library\K12.Data.dll" />
+    <Content Include="Library\K12.Presentation.dll" />
+    <Content Include="Library\SHSchool.Data.dll" />
+    <Content Include="Library\SHSchool.Data.pdb" />
+    <Content Include="Library\SHSchool.Data.xml" />
+    <Content Include="Library\SmartSchool.AccessControl.dll" />
+    <Content Include="Library\SmartSchool.AccessControl.pdb" />
+    <Content Include="Library\SmartSchool.API.PlugIn.dll" />
+    <Content Include="Library\SmartSchool.Common.dll" />
+    <Content Include="Library\SmartSchool.Common.DotNetBar.dll" />
+    <Content Include="Library\SmartSchool.Core.dll" />
+    <Content Include="Library\SmartSchool.Core.General.dll" />
+    <Content Include="Library\SmartSchool.Core.pdb" />
+    <Content Include="Library\SmartSchool.Customization.Data.dll" />
+    <Content Include="Library\SmartSchool.Customization.Data.xml" />
+    <Content Include="Library\SmartSchool.Customization.PlugIn.dll" />
+    <Content Include="Library\SmartSchool.ErrorReporting.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
