@@ -24,35 +24,66 @@ namespace TuitionSystem.TuitionControls
 
         private void lstStdView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstStdView.SelectedItems.Count > 0)
-            {
-                btnCopy.Enabled = false;
-                btnDelete.Enabled = false;
-                btnAddItem.Enabled = false;
-                btnSave.Enabled = false;
-            }
-
             if (lstStdView.SelectedItems.Count == 1)
             {
                 btnCopy.Enabled = true;
                 btnDelete.Enabled = true;
-                for (int i=0;i<lstStdView.Items.Count;i++)
+
+                for (int i = 0; i < lstStdView.Items.Count; i++)
                     if (lstStdView.Items[i].Selected)
                         _Source = TuitionChangeStdDAO.GetTuitionChangeStdBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, lstStdView.Items[i].Text);
 
-                dataGridViewX1.DataSource = null;
-                if (_Source.Count>1 || _Source[0].ChargeItem!="")
-                   dataGridViewX1.DataSource = _Source;
                 TuitionChangeStdRecord tsr = _Source[0];
                 txtTCSName.Text = tsr.TCSName;
-                cboType.Text  = tsr.MoneyType;
+                cboType.Text = tsr.MoneyType;
                 txtMoney.Text = tsr.Money.ToString();
-                btnAddItem.Enabled = true;
-                btnSave.Enabled = true;
-            }
-         }
+                comboBoxEx1.SelectedItem = null;
+                dataGridViewX1.EndEdit();
+                dataGridViewX1.Rows.Clear();
+                if (txtMoney.Text == "0")
+                {
+                    checkBoxX1.Checked = false;
+                    checkBoxX2.Checked = true;
+                    foreach (var item in _Source)
+                    {
+                        if (ChargeItem.Items.Contains(item.ChargeItem))
+                            dataGridViewX1.Rows[dataGridViewX1.Rows.Add(item.ChargeItem, "" + item.Percent, false)].Tag = item;
+                        else
+                            dataGridViewX1.Rows[dataGridViewX1.Rows.Add(null, "" + item.Percent, false)].Tag = item;
+                    }
+                }
+                else
+                {
+                    checkBoxX1.Checked = true;
+                    checkBoxX2.Checked = false;
+                    comboBoxEx1.Text = tsr.ChargeItem;
+                }
 
-       
+                validate();
+            }
+            else
+            {
+                _Source.Clear();
+
+                //新增新的
+                btnCopy.Enabled = false;
+                btnDelete.Enabled = false;
+                dataGridViewX1.EndEdit();
+                dataGridViewX1.Rows.Clear();
+
+                txtTCSName.Text = "";
+                cboType.Text = "-";
+                txtMoney.Text = "0";
+                comboBoxEx1.Text = "";
+                checkBoxX1.Checked = false;
+                checkBoxX2.Checked = true;
+                btnAddItem.Enabled = true;
+
+                validate();
+            }
+        }
+
+
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
@@ -70,7 +101,7 @@ namespace TuitionSystem.TuitionControls
                 return;
             }
             foreach (TuitionChangeStdRecord tsr in _Source)
-                   tsr.Deleted = true;
+                tsr.Deleted = true;
             _Source.SaveAll();
 
             RefreshlstStdView();
@@ -78,100 +109,149 @@ namespace TuitionSystem.TuitionControls
 
         private void btnAddItem_Click(object sender, EventArgs e)
         {
-            if (_Source==null)
-            {
-                _Source = new List<TuitionChangeStdRecord>();
-                _Source.Add(new TuitionChangeStdRecord());
-            }
-            if (_Source.Count == 0)
-            {
-                _Source = new List<TuitionChangeStdRecord>(_Source);
-                _Source.Add(new TuitionChangeStdRecord());
-            }
-            if (_Source.Count >= 1 && _Source[0].ChargeItem != "" && _Source[0].ChargeItem !=null)
-            {
-                _Source = new List<TuitionChangeStdRecord>(_Source);
-                _Source.Add(new TuitionChangeStdRecord());
-            }
-
             dataGridViewX1.EndEdit();
-            dataGridViewX1.CancelEdit();            
-            //DataBinding至dataGridView1
-            dataGridViewX1.DataSource = null;
-            dataGridViewX1.DataSource = _Source;
-            chkError();            
-            dataGridViewX1.CurrentCell = dataGridViewX1.Rows[dataGridViewX1.Rows.Count - 1].Cells[1];
-            dataGridViewX1.CurrentCell.Selected = true;
-            dataGridViewX1.BeginEdit(true);
-            btnSave.Enabled = false;            
+            dataGridViewX1.Rows.Add();
+            validate();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             dataGridViewX1.EndEdit();
-            dataGridViewX1.CancelEdit();
-            if (_Source == null || _Source.Count==0)
+            validate();
+            //判斷異動標準是否存在
+            List<TuitionChangeStdRecord> tsrs = TuitionChangeStdDAO.GetTuitionChangeStdBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTCSName.Text);
+            if (tsrs.Count > 1 && (_Source.Count == 0 || _Source[0].TCSName != txtTCSName.Text))
             {
-                _Source = new List<TuitionChangeStdRecord>();
+                MessageBox.Show("異動標準名稱已存在，請重新命名");
+                return;
+            }
+            if (!btnSave.Enabled) return;
+
+            if (_Source.Count == 0)
+            {
                 _Source.Add(new TuitionChangeStdRecord());
             }
-            foreach (TuitionChangeStdRecord tsr in _Source)
-              {
-                  if (_Source.Count == 1 && tsr.Deleted == true)
-                  {
-                      tsr.ChargeItem = null;
-                      tsr.Percent = 0;
-                      tsr.Deleted = false;
-                  }
-                tsr.SchoolYear = int.Parse(lblSchoolYear.Text);
-                tsr.Semester=(lblSemester.Text=="上學期"? 1:2);
-                tsr.MoneyType=cboType.Text;
-                int abc;
-                if (int.TryParse(txtMoney.Text, out abc))
-                    tsr.Money = abc;
-                else
-                {
-                    MessageBox.Show("異動金額設定錯誤");
-                    return;
-                }
-                //tsr.Money=(txtMoney.Text==""? 0:int.Parse(txtMoney.Text));
-                tsr.TCSName=txtTCSName.Text;                
-            }
-            _Source.SaveAll();
-            //更正使用到此異動項目之繳費表金額，異動金額
-            if (MessageBox.Show("儲存異動標準，是否更改相關資料?", "警告", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            foreach (var item in _Source)
             {
-                List<TuitionDetailRecord> TDRs = TuitionDetailDAO.GetTuitionDetailBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTCSName.Text);
-                foreach (TuitionDetailRecord tdr in TDRs)
+                item.Deleted = true;
+            }
+            if (checkBoxX1.Checked)
+            {
+                var target = _Source[0];
+
+                target.SchoolYear = int.Parse(lblSchoolYear.Text);
+                target.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
+                target.TCSName = txtTCSName.Text;
+
+                target.ChargeItem = comboBoxEx1.Text;
+                target.Money = int.Parse(txtMoney.Text);
+                target.MoneyType = cboType.Text;
+                target.Percent = 0;
+
+                target.Deleted = false;
+                if (target.MoneyType == "-" && target.Money > 0)
+                    target.Money = target.Money * -1;
+                if (target.MoneyType == "+" && target.Money < 0)
+                    target.Money = target.Money * -1;
+            }
+            else
+            {
+                foreach (DataGridViewRow row in dataGridViewX1.Rows)
                 {
-                    //繳費表
-                    List<StudentTuitionRecord> sr = StudentTuitionDAO.GetStudentTuitionByUID(tdr.STUID);
-                    if (sr.Count != 0)
+                    if (
+                            (("" + row.Cells[0].Value) != "") &&
+                            ("" + row.Cells[2].Value) != "true"
+                        )
                     {
-                        if (sr[0].PayDate != null)
-                            MessageBox.Show("有人使用本異動標準且已註冊，不修改該繳費表");
+                        TuitionChangeStdRecord target;
+                        if (row.Tag != null)
+                        {
+                            target = (TuitionChangeStdRecord)row.Tag;
+                        }
                         else
                         {
-                            //收費標準
-                            List<TuitionStandardRecord> TSRs = TuitionStandardDAO.GetTuitionStandardBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, sr[0].TSName);
-                            //異動金額
-                            tdr.ChangeAmount = SetTuition.CalcChangeMoneyByTCSName(TSRs, sr[0].UID, txtTCSName.Text);
-                            tdr.Save();
-                            //計算繳費表費用
-                            int Money = SetTuition.CalcTuition(TSRs);
-                            //計算異動金額
-                            int ChangeMoney = SetTuition.CalcChangeMoney(TSRs, tdr.STUID);
-                            //更改繳費表資料
-                            sr[0].ChangeMoney = ChangeMoney;
-                            sr[0].ChargeAmount = Money + ChangeMoney;
-                            sr[0].UpLoad = false;
-                            sr[0].Save();
+                            target = new TuitionChangeStdRecord();
+                            _Source.Add(target);
                         }
+
+                        target.SchoolYear = int.Parse(lblSchoolYear.Text);
+                        target.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
+                        target.TCSName = txtTCSName.Text;
+
+                        target.ChargeItem = "" + row.Cells[0].Value;
+                        target.Money = 0;
+                        target.MoneyType = cboType.Text;
+                        target.Percent = int.Parse("" + row.Cells[1].Value);
+
+                        target.Deleted = false;
                     }
                 }
             }
-            _Source = null;
+
+            _Source.SaveAll();
             RefreshlstStdView();
+            //if (_Source == null || _Source.Count == 0)
+            //{
+            //    _Source = new List<TuitionChangeStdRecord>();
+            //    _Source.Add(new TuitionChangeStdRecord());
+            //}
+            //foreach (TuitionChangeStdRecord tsr in _Source)
+            //{
+            //    if (_Source.Count == 1 && tsr.Deleted == true)
+            //    {
+            //        tsr.ChargeItem = null;
+            //        tsr.Percent = 0;
+            //        tsr.Deleted = false;
+            //    }
+            //    tsr.SchoolYear = int.Parse(lblSchoolYear.Text);
+            //    tsr.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
+            //    tsr.MoneyType = cboType.Text;
+            //    int abc;
+            //    if (int.TryParse(txtMoney.Text, out abc))
+            //        tsr.Money = abc;
+            //    else
+            //    {
+            //        MessageBox.Show("異動金額設定錯誤");
+            //        return;
+            //    }
+            //    //tsr.Money=(txtMoney.Text==""? 0:int.Parse(txtMoney.Text));
+            //    tsr.TCSName = txtTCSName.Text;
+            //}
+            //_Source.SaveAll();
+            ////更正使用到此異動項目之繳費表金額，異動金額
+            //if (MessageBox.Show("儲存異動標準，是否更改相關資料?", "警告", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
+            //    List<TuitionDetailRecord> TDRs = TuitionDetailDAO.GetTuitionDetailBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTCSName.Text);
+            //    foreach (TuitionDetailRecord tdr in TDRs)
+            //    {
+            //        //繳費表
+            //        List<StudentTuitionRecord> sr = StudentTuitionDAO.GetStudentTuitionByUID(tdr.STUID);
+            //        if (sr.Count != 0)
+            //        {
+            //            if (sr[0].PayDate != null)
+            //                MessageBox.Show("有人使用本異動標準且已註冊，不修改該繳費表");
+            //            else
+            //            {
+            //                //收費標準
+            //                List<TuitionStandardRecord> TSRs = TuitionStandardDAO.GetTuitionStandardBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, sr[0].TSName);
+            //                //異動金額
+            //                tdr.ChangeAmount = SetTuition.CalcChangeMoneyByTCSName(TSRs, sr[0].UID, txtTCSName.Text);
+            //                tdr.Save();
+            //                //計算繳費表費用
+            //                int Money = SetTuition.CalcTuition(TSRs);
+            //                //計算異動金額
+            //                int ChangeMoney = SetTuition.CalcChangeMoney(TSRs, tdr.STUID);
+            //                //更改繳費表資料
+            //                sr[0].ChangeMoney = ChangeMoney;
+            //                sr[0].ChargeAmount = Money + ChangeMoney;
+            //                sr[0].UpLoad = false;
+            //                sr[0].Save();
+            //            }
+            //        }
+            //    }
+            //}
+            //_Source = null;
+            //RefreshlstStdView();
         }
 
         private void TuitionChangeStdProcess_Load(object sender, EventArgs e)
@@ -182,134 +262,89 @@ namespace TuitionSystem.TuitionControls
             {
                 MessageBox.Show("未設定學年度學期");
                 this.Close();
-            } 
+            }
             lblSchoolYear.Text = GlobalValue.CurrentSchoolYear.ToString();
             lblSemester.Text = GlobalValue.CurrentSemester;
             dataGridViewX1.EndEdit();
             dataGridViewX1.CancelEdit();
             _ChargeItem = ChargeItemDAO.GetChargeItemList();
             ChargeItem.Items.Clear();
+            comboBoxEx1.Items.Clear();
             foreach (ChargeItemRecord cr in _ChargeItem)
+            {
                 ChargeItem.Items.Add(cr.ChargeItem);
+                comboBoxEx1.Items.Add(cr.ChargeItem);
+            }
             RefreshlstStdView();
-            
+
         }
         private void RefreshlstStdView()
         {
             List<TuitionChangeStdRecord> TSRs = TuitionChangeStdDAO.GetTuitionChangeStdBySS(int.Parse(lblSchoolYear.Text), lblSemester.Text);
             //List<string> TSName=new List<string>();
-            lstStdView.Items.Clear();            
+            lstStdView.Items.Clear();
             foreach (var tsr in TSRs)
                 if (!lstStdView.Items.ContainsKey(tsr.TCSName))
-                    lstStdView.Items.Add(tsr.TCSName,tsr.TCSName,"");
-            btnCopy.Enabled = false;
-            btnDelete.Enabled = false;
-            btnAddItem.Enabled = false;
-            btnSave.Enabled = false;
-            cboType.Text = null;            
-            txtMoney.Text = "0";
-            txtTCSName.Text = "";            
-            dataGridViewX1.DataSource = null;
+                    lstStdView.Items.Add(tsr.TCSName, tsr.TCSName, "");
+
+            lstStdView_SelectedIndexChanged(null, null);
+        }
+        private void validate()
+        {
+            bool pass = true;
+            if (txtTCSName.Text == "")
+                pass = false;
+            if (checkBoxX1.Checked)
+            {
+                checkBoxX2.Checked = false;
+                txtMoney.Enabled = comboBoxEx1.Enabled = true;
+                btnAddItem.Enabled = dataGridViewX1.Enabled = false;
+
+                int i = 0;
+                if (!int.TryParse(txtMoney.Text, out i) || i == 0)
+                    pass = false;
+
+                if (comboBoxEx1.Text == "")
+                    pass = false;
+
+            }
+            else
+            {
+                checkBoxX2.Checked = true;
+                txtMoney.Enabled = comboBoxEx1.Enabled = false;
+                btnAddItem.Enabled = dataGridViewX1.Enabled = true;
+                bool hasItem = false;
+                foreach (DataGridViewRow row in dataGridViewX1.Rows)
+                {
+                    int i = 0;
+                    if (
+                            (("" + row.Cells[0].Value) != "") &&
+                            ("" + row.Cells[2].Value) != "true" &&
+                            (int.TryParse("" + row.Cells[1].Value, out i) && i > 0 && i <= 100) 
+                        )
+                        hasItem = true;
+                    if (
+                            (("" + row.Cells[0].Value) != "") &&
+                            ("" + row.Cells[2].Value) != "true" &&
+                            (!int.TryParse("" + row.Cells[1].Value, out i) || i <= 0 || i > 100)
+                        )
+                        pass = false;
+                }
+                if(!hasItem)
+                    pass = false;
+            }
+
+            btnSave.Enabled = pass;
         }
         private void dataGridViewX1_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {           
+        {
             e.Cancel = true;
             if (e.Exception != null)
                 dataGridViewX1[e.ColumnIndex, e.RowIndex].ErrorText = e.Exception.Message;
             dataGridViewX1.UpdateCellErrorText(e.ColumnIndex, e.RowIndex);
             dataGridViewX1[e.ColumnIndex, e.RowIndex].Value = null;
         }
-        private void dataGridViewX1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-           chkError();
-        }
-        private void chkError()
-        {
-            Boolean IsError;
-            IsError = false;
-            int result;
-            for (int i = dataGridViewX1.Rows.Count - 1; i >= 0; i--)
-            {
-                if (""+dataGridViewX1.Rows[i].Cells[1].Value == "")
-                    IsError = true;
-                else
-                {
-                    dataGridViewX1[2, i].ErrorText = "";
-                    dataGridViewX1.UpdateCellErrorText(2, i);                    
-                    if (!int.TryParse(""+dataGridViewX1[2, i].Value, out result))
-                    {
-                        dataGridViewX1[2, i].ErrorText = "!";
-                        dataGridViewX1.UpdateCellErrorText(2, i);
-                        IsError = true;
-                    }
-                    else
-                    {
-                        result = int.Parse(""+dataGridViewX1[2, i].Value);
-                        if (result> 100 || result < 1)
-                        {
-                            dataGridViewX1[2, i].ErrorText = "!";
-                            dataGridViewX1.UpdateCellErrorText(2, i);
-                            IsError = true;
-                        }
-                    } 
-                    dataGridViewX1[1, i].ErrorText = "";
-                    dataGridViewX1.UpdateCellErrorText(1, i);
-                    for (int j = i - 1; j >= 0; j--)
-                    {
-                        if (("" + dataGridViewX1.Rows[i].Cells[1].Value).Trim() == ("" + dataGridViewX1.Rows[j].Cells[1].Value).Trim())
-                        {
-                            IsError = true;
-                            dataGridViewX1[1, i].ErrorText = "!";
-                            dataGridViewX1.UpdateCellErrorText(1, i);
-                        }
-                    }
-                }
 
-            }
-            //for (int i = 0; i < dataGridViewX1.Rows.Count;i++ )
-            //    for (int j= 0; j < dataGridViewX1.Rows.Count; j++)
-            //        if (dataGridViewX1.Rows[i].Cells[1].Value.ToString().Trim()==dataGridViewX1.Rows[j].Cells[1].Value.ToString().Trim() && i!=j) 
-            //        {
-            //            IsRepeat = true;
-            //            dataGridViewX1[1, i].ErrorText = "!";
-            //            dataGridViewX1.UpdateCellErrorText(1,i);                    
-            //        }
-            if (IsError)
-                btnSave.Enabled = false;
-            else
-                btnSave.Enabled = true;
-
-        }
-
-        private void chkValidity(object sender, EventArgs e)
-        {
-            int intMoney;
-            if (txtTCSName.Text == "" || cboType.Text == "" || !int.TryParse(txtMoney.Text, out intMoney))
-            {
-                btnAddItem.Enabled = false;
-                btnSave.Enabled = false;
-            }
-            else
-            {
-                //判斷異動標準是否存在
-                if (lstStdView.SelectedItems.Count == 1)
-                {
-                    for (int i = 0; i < lstStdView.Items.Count; i++)
-                        if (lstStdView.Items[i].Selected)
-                            if (txtTCSName.Text == lstStdView.Items[i].Text)
-                                return;
-                }
-                List<TuitionChangeStdRecord> tsrs = new List<TuitionChangeStdRecord>();
-                tsrs = TuitionChangeStdDAO.GetTuitionChangeStdBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTCSName.Text);
-                if (tsrs.Count > 1 && _Source.Count == 0)
-                {
-                    MessageBox.Show("異動標準名稱已存在，請重新命名");
-                    return;
-                }
-                btnAddItem.Enabled = true;
-                btnSave.Enabled = true;
-            }
-        }
         void btnCopySemData_Click(object sender, System.EventArgs e)
         {
             int cpSchoolYear;
@@ -331,7 +366,7 @@ namespace TuitionSystem.TuitionControls
                 {
                     Framework.MultiThreadBackgroundWorker<TuitionChangeStdRecord> mBKW = new Framework.MultiThreadBackgroundWorker<TuitionChangeStdRecord>();
 
-                    mBKW.DoWork += delegate(object sender2, Framework.PackageDoWorkEventArgs<TuitionChangeStdRecord> e2)
+                    mBKW.DoWork += delegate (object sender2, Framework.PackageDoWorkEventArgs<TuitionChangeStdRecord> e2)
                     {
                         List<TuitionChangeStdRecord> tcsr = new List<TuitionChangeStdRecord>();
                         foreach (var tsr in e2.Items)
@@ -344,15 +379,15 @@ namespace TuitionSystem.TuitionControls
                             newtsr.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
                             newtsr.Money = tsr.Money;
                             newtsr.ChargeItem = tsr.ChargeItem;
-                            tcsr.Add(newtsr);  
+                            tcsr.Add(newtsr);
                         }
                         tcsr.SaveAll();
                     };
-                    mBKW.ProgressChanged += delegate(object sender3, ProgressChangedEventArgs e3)
+                    mBKW.ProgressChanged += delegate (object sender3, ProgressChangedEventArgs e3)
                     {
                         FISCA.Presentation.MotherForm.SetStatusBarMessage("正在複製異動標準...", e3.ProgressPercentage);
                     };
-                    mBKW.RunWorkerCompleted += delegate(object sender4, RunWorkerCompletedEventArgs e4)
+                    mBKW.RunWorkerCompleted += delegate (object sender4, RunWorkerCompletedEventArgs e4)
                     {
                         FISCA.Presentation.MotherForm.SetStatusBarMessage("");
                         MessageBox.Show("複製完成");
@@ -365,10 +400,23 @@ namespace TuitionSystem.TuitionControls
             }
             else
             {
-                MessageBox.Show("已有資料，不能複製");
+                MessageBox.Show("異動標準名稱已存在，請重新命名");
             }
-           
+
         }
-       
+
+        private void checkBoxX2_CheckedChanged(object sender, EventArgs e)
+        {
+            validate();
+        }
+        private void txt_TextChanged(object sender, EventArgs e)
+        {
+            validate();
+        }
+
+        private void dataGridViewX1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            validate();
+        }
     }
 }
