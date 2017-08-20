@@ -96,13 +96,151 @@ namespace TuitionSystem
                 };
                 ribbon = RoleAclSource.Instance["學費"]["學費資料管理"];
                 ribbon.Add(new RibbonFeature("Tuition計算繳費金額", "計算繳費金額"));
-                MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Enable = false;// CurrentUser.Acl["Tuition計算繳費金額"].Executable;
+                MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Enable = CurrentUser.Acl["Tuition計算繳費金額"].Executable;
                 //MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Image = Properties.Resources.Money;
                 MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Click += delegate
                 {
-                    //(new TuitionChangeInputTime()).ShowDialog();
+                    if (GlobalValue.CurrentSchoolYear == 0 || GlobalValue.CurrentSemester == null)
+                    {
+                        MessageBox.Show("未設定學年度學期");
+                    }
+                    else
+                    {
+                        int schoolYear = GlobalValue.CurrentSchoolYear;
+                        int semester = GlobalValue.CurrentSemester == "上學期" ? 1 : 2;
+                        BackgroundWorker bkw = new BackgroundWorker();
+                        bkw.WorkerReportsProgress = true;
+                        bkw.DoWork += delegate
+                        {
+                            bkw.ReportProgress(1);
+                            AccessHelper accessHelper = new AccessHelper();
+                            var tuitionStandardList = accessHelper.Select<TuitionStandardRecord>("學年度=" + schoolYear + " AND 學期=" + semester);
+                            var tuitionChangeStdList = accessHelper.Select<TuitionChangeStdRecord>("學年度=" + schoolYear + " AND 學期=" + semester);
+                            var studentTuitionList = accessHelper.Select<StudentTuitionRecord>("學年度=" + schoolYear + " AND 學期=" + semester);
+
+                            bkw.ReportProgress(10);
+                            List<StudentTuitionRecord> package = new List<StudentTuitionRecord>();
+                            for (int i = 0; i < studentTuitionList.Count; i++)
+                            {
+                                package.Add(studentTuitionList[i]);
+                                if (i + 1 == studentTuitionList.Count || package.Count == 200)
+                                {
+                                    //整理收費表收費標準資料
+                                    Dictionary<string, Dictionary<string, int>> moneyDetail = new Dictionary<string, Dictionary<string, int>>();
+                                    foreach (var item in package)
+                                    {
+                                        moneyDetail.Add(item.UID, new Dictionary<string, int>());
+                                        foreach (var stdItem in tuitionStandardList)
+                                        {
+                                            if (stdItem.TSName == item.TSName)
+                                            {
+                                                if (!moneyDetail[item.UID].ContainsKey(stdItem.ChargeItem))
+                                                {
+                                                    moneyDetail[item.UID].Add(stdItem.ChargeItem, 0);
+                                                }
+                                                moneyDetail[item.UID][stdItem.ChargeItem] += stdItem.Money;
+                                            }
+                                        }
+                                    };
+                                    //整理收費異動資料
+                                    var packageTuituin = accessHelper.Select<TuitionDetailRecord>("收費表 in ('" + string.Join("','", moneyDetail.Keys) + "')");
+                                    Dictionary<string, List<TuitionDetailRecord>> tuitionDetail = new Dictionary<string, List<TuitionDetailRecord>>();
+                                    foreach (var item in packageTuituin)
+                                    {
+                                        if (!tuitionDetail.ContainsKey(item.STUID))
+                                            tuitionDetail.Add(item.STUID, new List<TuitionDetailRecord>());
+                                        tuitionDetail[item.STUID].Add(item);
+                                    }
+                                    //計算異動金額、收費表金額
+                                    foreach (var item in package)
+                                    {
+                                        //計算原始金額
+                                        int moneyCount = 0;
+                                        foreach (var key in moneyDetail[item.UID].Keys)
+                                        {
+                                            moneyCount += moneyDetail[item.UID][key];
+                                        }
+                                        item.ChargeAmount = moneyCount;
+                                        //計算異動項目金額
+                                        if (tuitionDetail.ContainsKey(item.UID))
+                                        {
+                                            //減免金額直接扣抵
+                                            foreach (var changeItem in tuitionDetail[item.UID])
+                                            {
+                                                foreach (var changeSTDItem in tuitionChangeStdList)
+                                                {
+                                                    if (changeSTDItem.TCSName == changeItem.TCSName)
+                                                    {
+                                                        //異動項目直接扣錢
+                                                        if (changeSTDItem.Money != 0)
+                                                        {
+                                                            //正負值校正
+                                                            if (changeSTDItem.MoneyType != "＋" && changeItem.ChangeAmount > 0)
+                                                                changeItem.ChangeAmount = changeItem.ChangeAmount * -1;
+                                                            if (changeSTDItem.MoneyType == "＋" && changeItem.ChangeAmount < 0)
+                                                                changeItem.ChangeAmount = changeItem.ChangeAmount * -1;
+                                                            if (moneyDetail[item.UID].ContainsKey(changeSTDItem.ChargeItem))
+                                                            {
+                                                                moneyDetail[item.UID][changeSTDItem.ChargeItem] += changeItem.ChangeAmount;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //減免金額百分比計算
+                                            foreach (var changeItem in tuitionDetail[item.UID])
+                                            {
+                                                bool isPercent = false;
+                                                int changeMoney = 0;
+                                                foreach (var changeSTDItem in tuitionChangeStdList)
+                                                {
+                                                    if (changeSTDItem.TCSName == changeItem.TCSName)
+                                                    {
+                                                        //異動項目使用百分比
+                                                        if (changeSTDItem.Money == 0)
+                                                        {
+                                                            isPercent = true;
+                                                            if (moneyDetail[item.UID].ContainsKey(changeSTDItem.ChargeItem))
+                                                            {
+                                                                changeMoney += moneyDetail[item.UID][changeSTDItem.ChargeItem] * changeSTDItem.Percent / 100 * (changeSTDItem.MoneyType == "＋" ? 1 : -1);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                if (isPercent)
+                                                    changeItem.ChangeAmount = changeMoney;
+                                            }
+                                            //總計異動金額
+                                            int changeCount = 0;
+                                            foreach (var changeItem in tuitionDetail[item.UID])
+                                            {
+                                                changeCount += changeItem.ChangeAmount;
+                                            }
+                                            item.ChangeMoney = changeCount;
+                                            item.ChargeAmount += changeCount;
+                                        }
+                                    }
+                                    bkw.ReportProgress(10 + 90 * (i + 1) / studentTuitionList.Count);
+                                    package.SaveAll();
+                                    packageTuituin.SaveAll();
+                                    package.Clear();
+                                }
+                            }
+                        };
+                        bkw.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
+                        {
+                            MotherForm.SetStatusBarMessage("繳費金額計算中...", e.ProgressPercentage);
+                        };
+                        bkw.RunWorkerCompleted += delegate
+                        {
+                            MotherForm.SetStatusBarMessage("繳費金額計算完成。");
+                            MessageBox.Show("繳費金額計算完成。");
+                        };
+                        bkw.RunWorkerAsync();
+                    }
                 };
-                //}
+
                 //ribbon = RoleAclSource.Instance["學費"]["學費資料管理"];
                 //ribbon.Add(new RibbonFeature("Tuition004", "收費模組設定"));
                 //MotherForm.RibbonBarItems["學費", "學費資料管理"]["收費模組設定"].Enable = CurrentUser.Acl["Tuition004"].Executable;
@@ -903,22 +1041,22 @@ namespace TuitionSystem
                 {
                     MenuButton btn = (MenuButton)sender1;
                     List<string> pks = new List<string>();
-                        //foreach (SHStudentRecord nsr in nsrs)
-                        //{
-                        //    MotherForm.SetStatusBarMessage("正在設定收費標準", (nowSet++ * 100 / nsrs.Count));
-                        //    if (nsr.Status == SHStudentRecord.StudentStatus.一般)
-                        //    {
-                        //        if (!SetTuition.SetTuitionStandard("舊生", btn.Text, nsr.ID.ToString(), nsr.Gender))
-                        //            MessageBox.Show(nsr.StudentNumber + nsr.Name + "收費標準設定不成功");
-                        //        pks.Add(nsr.ID);
-                        //    }
-                        //}
-                        //MotherForm.SetStatusBarMessage("");
-                        ////JHSchool.Student.Instance.SyncDataBackground(pks);
-                        //if (DataChanged != null)
-                        //    DataChanged(null, new DataChangedEventArgs(pks));
-                        //MessageBox.Show("設定完成");
-                        {
+                    //foreach (SHStudentRecord nsr in nsrs)
+                    //{
+                    //    MotherForm.SetStatusBarMessage("正在設定收費標準", (nowSet++ * 100 / nsrs.Count));
+                    //    if (nsr.Status == SHStudentRecord.StudentStatus.一般)
+                    //    {
+                    //        if (!SetTuition.SetTuitionStandard("舊生", btn.Text, nsr.ID.ToString(), nsr.Gender))
+                    //            MessageBox.Show(nsr.StudentNumber + nsr.Name + "收費標準設定不成功");
+                    //        pks.Add(nsr.ID);
+                    //    }
+                    //}
+                    //MotherForm.SetStatusBarMessage("");
+                    ////JHSchool.Student.Instance.SyncDataBackground(pks);
+                    //if (DataChanged != null)
+                    //    DataChanged(null, new DataChangedEventArgs(pks));
+                    //MessageBox.Show("設定完成");
+                    {
                         Framework.MultiThreadBackgroundWorker<SHStudentRecord> mBKW = new Framework.MultiThreadBackgroundWorker<SHStudentRecord>();
                         FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定收費標準...", 0);
                         mBKW.DoWork += delegate (object sender2, Framework.PackageDoWorkEventArgs<SHStudentRecord> e2)
@@ -947,8 +1085,8 @@ namespace TuitionSystem
                             FISCA.Presentation.MotherForm.SetStatusBarMessage("");
                             MessageBox.Show("設定完成");
                         };
-                            //設定包的大小,1為人數
-                            mBKW.PackageSize = 10;
+                        //設定包的大小,1為人數
+                        mBKW.PackageSize = 10;
                         mBKW.RunWorkerAsync(nsrs);
                     }
                 };

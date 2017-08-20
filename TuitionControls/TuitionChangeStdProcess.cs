@@ -85,7 +85,7 @@ namespace TuitionSystem.TuitionControls
                 dataGridViewX1.Rows.Clear();
 
                 txtTCSName.Text = "";
-                cboType.Text = "-";
+                cboType.Text = "－";
                 txtMoney.Text = "0";
                 comboBoxEx1.SelectedItem = null;
                 comboBoxEx2.Text = "";
@@ -159,7 +159,7 @@ namespace TuitionSystem.TuitionControls
 
                 target.ChargeItem = comboBoxEx1.Text;
                 target.Money = int.Parse(txtMoney.Text);
-                target.MoneyType = cboType.Text;
+                target.MoneyType = "" + cboType.SelectedItem;
                 target.Percent = 0;
                 if (comboBoxEx2.Text != "")
                     target.RefTeacherID = _TeacherIDLookup[comboBoxEx2.Text];
@@ -167,9 +167,7 @@ namespace TuitionSystem.TuitionControls
                     target.RefTeacherID = null;
 
                 target.Deleted = false;
-                if (target.MoneyType == "-" && target.Money > 0)
-                    target.Money = target.Money * -1;
-                if (target.MoneyType == "+" && target.Money < 0)
+                if (target.Money < 0)
                     target.Money = target.Money * -1;
             }
             else
@@ -198,7 +196,7 @@ namespace TuitionSystem.TuitionControls
 
                         target.ChargeItem = "" + row.Cells[0].Value;
                         target.Money = 0;
-                        target.MoneyType = cboType.Text;
+                        target.MoneyType = "" + cboType.SelectedItem;
                         target.Percent = int.Parse("" + row.Cells[1].Value);
                         if (comboBoxEx2.Text != "")
                             target.RefTeacherID = _TeacherIDLookup[comboBoxEx2.Text];
@@ -227,7 +225,7 @@ namespace TuitionSystem.TuitionControls
             //    }
             //    tsr.SchoolYear = int.Parse(lblSchoolYear.Text);
             //    tsr.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
-            //    tsr.MoneyType = cboType.Text;
+            //    tsr.MoneyType = "" + cboType.SelectedItem;
             //    int abc;
             //    if (int.TryParse(txtMoney.Text, out abc))
             //        tsr.Money = abc;
