@@ -17,9 +17,18 @@ namespace TuitionSystem.TuitionControls
     {
         private List<TuitionChangeStdRecord> _Source = new List<TuitionChangeStdRecord>();
         private List<ChargeItemRecord> _ChargeItem = new List<ChargeItemRecord>();
+        private Dictionary<string, int> _TeacherIDLookup = new Dictionary<string, int>();
+        private Dictionary<int, string> _TeacherKeyLookup = new Dictionary<int, string>();
         public TuitionChangeStdProcess()
         {
             InitializeComponent();
+            foreach (var teacherRec in K12.Data.Teacher.SelectAll())
+            {
+                var key = teacherRec.Name + (teacherRec.Nickname == "" ? "" : ("[" + teacherRec.Nickname + "]"));
+                _TeacherIDLookup.Add(key, int.Parse(teacherRec.ID));
+                _TeacherKeyLookup.Add(int.Parse(teacherRec.ID), key);
+                comboBoxEx2.Items.Add(key);
+            }
         }
 
         private void lstStdView_SelectedIndexChanged(object sender, EventArgs e)
@@ -38,6 +47,10 @@ namespace TuitionSystem.TuitionControls
                 cboType.Text = tsr.MoneyType;
                 txtMoney.Text = tsr.Money.ToString();
                 comboBoxEx1.SelectedItem = null;
+                if (tsr.RefTeacherID != null && _TeacherKeyLookup.ContainsKey(tsr.RefTeacherID.Value))
+                    comboBoxEx2.Text = _TeacherKeyLookup[tsr.RefTeacherID.Value];
+                else
+                    comboBoxEx2.Text = "";
                 dataGridViewX1.EndEdit();
                 dataGridViewX1.Rows.Clear();
                 if (txtMoney.Text == "0")
@@ -74,7 +87,8 @@ namespace TuitionSystem.TuitionControls
                 txtTCSName.Text = "";
                 cboType.Text = "-";
                 txtMoney.Text = "0";
-                comboBoxEx1.Text = "";
+                comboBoxEx1.SelectedItem = null;
+                comboBoxEx2.Text = "";
                 checkBoxX1.Checked = false;
                 checkBoxX2.Checked = true;
                 btnAddItem.Enabled = true;
@@ -147,6 +161,10 @@ namespace TuitionSystem.TuitionControls
                 target.Money = int.Parse(txtMoney.Text);
                 target.MoneyType = cboType.Text;
                 target.Percent = 0;
+                if (comboBoxEx2.Text != "")
+                    target.RefTeacherID = _TeacherIDLookup[comboBoxEx2.Text];
+                else
+                    target.RefTeacherID = null;
 
                 target.Deleted = false;
                 if (target.MoneyType == "-" && target.Money > 0)
@@ -160,7 +178,7 @@ namespace TuitionSystem.TuitionControls
                 {
                     if (
                             (("" + row.Cells[0].Value) != "") &&
-                            ("" + row.Cells[2].Value) != "true"
+                            ("" + row.Cells[2].Value) != "True"
                         )
                     {
                         TuitionChangeStdRecord target;
@@ -182,6 +200,10 @@ namespace TuitionSystem.TuitionControls
                         target.Money = 0;
                         target.MoneyType = cboType.Text;
                         target.Percent = int.Parse("" + row.Cells[1].Value);
+                        if (comboBoxEx2.Text != "")
+                            target.RefTeacherID = _TeacherIDLookup[comboBoxEx2.Text];
+                        else
+                            target.RefTeacherID = null;
 
                         target.Deleted = false;
                     }
@@ -294,6 +316,10 @@ namespace TuitionSystem.TuitionControls
             bool pass = true;
             if (txtTCSName.Text == "")
                 pass = false;
+
+            if (comboBoxEx2.Text != "" && !_TeacherIDLookup.ContainsKey(comboBoxEx2.Text))
+                pass = false;
+
             if (checkBoxX1.Checked)
             {
                 checkBoxX2.Checked = false;
@@ -319,18 +345,18 @@ namespace TuitionSystem.TuitionControls
                     int i = 0;
                     if (
                             (("" + row.Cells[0].Value) != "") &&
-                            ("" + row.Cells[2].Value) != "true" &&
-                            (int.TryParse("" + row.Cells[1].Value, out i) && i > 0 && i <= 100) 
+                            ("" + row.Cells[2].Value) != "True" &&
+                            (int.TryParse("" + row.Cells[1].Value, out i) && i > 0 && i <= 100)
                         )
                         hasItem = true;
                     if (
                             (("" + row.Cells[0].Value) != "") &&
-                            ("" + row.Cells[2].Value) != "true" &&
+                            ("" + row.Cells[2].Value) != "True" &&
                             (!int.TryParse("" + row.Cells[1].Value, out i) || i <= 0 || i > 100)
                         )
                         pass = false;
                 }
-                if(!hasItem)
+                if (!hasItem)
                     pass = false;
             }
 

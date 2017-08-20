@@ -44,6 +44,9 @@
             this.comboItem2 = new DevComponents.Editors.ComboItem();
             this.comboItem3 = new DevComponents.Editors.ComboItem();
             this.dataGridViewX1 = new DevComponents.DotNetBar.Controls.DataGridViewX();
+            this.ChargeItem = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new DevComponents.DotNetBar.Controls.DataGridViewCheckBoxXColumn();
             this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.btnAddItem = new DevComponents.DotNetBar.ButtonX();
             this.btnSave = new DevComponents.DotNetBar.ButtonX();
@@ -61,9 +64,6 @@
             this.labelX6 = new DevComponents.DotNetBar.LabelX();
             this.lstStdView = new DevComponents.DotNetBar.Controls.ListViewEx();
             this.btnCopySemData = new DevComponents.DotNetBar.ButtonX();
-            this.ChargeItem = new DevComponents.DotNetBar.Controls.DataGridViewComboBoxExColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new DevComponents.DotNetBar.Controls.DataGridViewCheckBoxXColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewX1)).BeginInit();
             this.groupPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -261,6 +261,33 @@
             this.dataGridViewX1.TabIndex = 12;
             this.dataGridViewX1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewX1_CellValueChanged);
             this.dataGridViewX1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewX1_DataError);
+            // 
+            // ChargeItem
+            // 
+            this.ChargeItem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ChargeItem.DropDownHeight = 106;
+            this.ChargeItem.DropDownWidth = 121;
+            this.ChargeItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ChargeItem.HeaderText = "收費項目";
+            this.ChargeItem.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.ChargeItem.IntegralHeight = false;
+            this.ChargeItem.ItemHeight = 17;
+            this.ChargeItem.Name = "ChargeItem";
+            this.ChargeItem.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            // 
+            // Column1
+            // 
+            this.Column1.HeaderText = "金額";
+            this.Column1.Name = "Column1";
+            // 
+            // Column2
+            // 
+            this.Column2.Checked = true;
+            this.Column2.CheckState = System.Windows.Forms.CheckState.Indeterminate;
+            this.Column2.CheckValue = "N";
+            this.Column2.HeaderText = "刪除";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 55;
             // 
             // labelX5
             // 
@@ -467,6 +494,7 @@
             this.lstStdView.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lstStdView.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lstStdView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstStdView.HideSelection = false;
             this.lstStdView.Location = new System.Drawing.Point(8, 39);
             this.lstStdView.MultiSelect = false;
             this.lstStdView.Name = "lstStdView";
@@ -489,32 +517,6 @@
             this.btnCopySemData.Text = "複製上期資料";
             this.btnCopySemData.Click += new System.EventHandler(this.btnCopySemData_Click);
             // 
-            // ChargeItem
-            // 
-            this.ChargeItem.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ChargeItem.DropDownHeight = 106;
-            this.ChargeItem.DropDownWidth = 121;
-            this.ChargeItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ChargeItem.HeaderText = "收費項目";
-            this.ChargeItem.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.ChargeItem.ItemHeight = 17;
-            this.ChargeItem.Name = "ChargeItem";
-            this.ChargeItem.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            // 
-            // Column1
-            // 
-            this.Column1.HeaderText = "金額";
-            this.Column1.Name = "Column1";
-            // 
-            // Column2
-            // 
-            this.Column2.Checked = true;
-            this.Column2.CheckState = System.Windows.Forms.CheckState.Indeterminate;
-            this.Column2.CheckValue = "N";
-            this.Column2.HeaderText = "刪除";
-            this.Column2.Name = "Column2";
-            this.Column2.Width = 55;
-            // 
             // TuitionStandardProcess
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
@@ -530,6 +532,7 @@
             this.Controls.Add(this.groupPanel1);
             this.Controls.Add(this.btnCopySemData);
             this.DoubleBuffered = true;
+            this.ImeMode = System.Windows.Forms.ImeMode.Hangul;
             this.Name = "TuitionStandardProcess";
             this.Text = "收費標準維護";
             this.Load += new System.EventHandler(this.TuitionStandardProcess_Load);

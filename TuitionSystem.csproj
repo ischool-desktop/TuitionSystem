@@ -40,7 +40,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Ischool_AE\modules\plugin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,8 +70,9 @@
       <HintPath>..\..\..\Ischool_AE\modules\SHSchoolLoader\Aspose.Words.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DevComponents.DotNetBar2">
-      <HintPath>..\..\..\Ischool_AE\components\DevComponents.DotNetBar2.dll</HintPath>
+    <Reference Include="DevComponents.DotNetBar2, Version=9.5.0.1, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Library\DevComponents.DotNetBar2.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FISCA">
@@ -135,6 +136,7 @@
     <Compile Include="Data\ChargeItem.cs" />
     <Compile Include="Data\GlobalValue.cs" />
     <Compile Include="Data\StudentTuition.cs" />
+    <Compile Include="Data\TuitionChangeOnlineInputSetting.cs" />
     <Compile Include="Data\TuitionDetail.cs" />
     <Compile Include="Data\TuitionStandard.cs" />
     <Compile Include="Data\TuitionChangeStd.cs" />
@@ -193,6 +195,9 @@
     <EmbeddedResource Include="TuitionControls\SetCurrentSemester.resx">
       <DependentUpon>SetCurrentSemester.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TuitionControls\TuitionChangeInputTime.resx">
+      <DependentUpon>TuitionChangeInputTime.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TuitionControls\TuitionStandardCopy.resx">
       <DependentUpon>TuitionStandardCopy.cs</DependentUpon>
@@ -253,6 +258,12 @@
     </Compile>
     <Compile Include="TuitionControls\SetCurrentSemester.Designer.cs">
       <DependentUpon>SetCurrentSemester.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeInputTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TuitionControls\TuitionChangeInputTime.Designer.cs">
+      <DependentUpon>TuitionChangeInputTime.cs</DependentUpon>
     </Compile>
     <Compile Include="TuitionControls\TuitionStandardCopy.cs">
       <SubType>Form</SubType>

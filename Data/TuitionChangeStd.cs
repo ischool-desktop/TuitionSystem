@@ -30,6 +30,10 @@ namespace TuitionSystem.Data
         [Field(Field = "金額", Indexed = false)]
         public int Money { get; set; }
 
+        [Field(Field = "管理教師", Indexed = true)]
+        public int? RefTeacherID { get; set; }
+        
+
         #region IComparable<TuitionChangeStdRecord> 成員
 
         public int CompareTo(TuitionChangeStdRecord other)

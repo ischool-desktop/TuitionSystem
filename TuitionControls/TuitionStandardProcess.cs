@@ -30,19 +30,24 @@ namespace TuitionSystem.TuitionControls
             btnDelete.Enabled = false;
             btnAddItem.Enabled = true;
 
+            _Source.Clear();
             dataGridViewX1.Rows.Clear();
             if (lstStdView.SelectedItems.Count == 1)
             {
                 btnCopy.Enabled = true;
                 btnDelete.Enabled = true;
                 for (int i = 0; i < lstStdView.Items.Count; i++)
+                {
                     if (lstStdView.Items[i].Selected)
                         _Source = TuitionStandardDAO.GetTuitionStandardBySST(int.Parse(lblSchoolYear.Text), lblSemester.Text, lstStdView.Items[i].Text);
-
+                }
                 foreach (TuitionStandardRecord tcsr in _Source)
+                {
                     if (tcsr.ChargeItem != null)
                         if (!ChargeItem.Items.Contains(tcsr.ChargeItem))
                             ChargeItem.Items.Add(tcsr.ChargeItem);
+                    dataGridViewX1.Rows[dataGridViewX1.Rows.Add(tcsr.ChargeItem, tcsr.Money, false)].Tag = tcsr;
+                }
                 TuitionStandardRecord tsr = _Source[0];
                 txtTSName.Text = tsr.TSName;
                 cboClassYear.Text = tsr.ClassYear;
@@ -85,7 +90,7 @@ namespace TuitionSystem.TuitionControls
 
         private void btnAddItem_Click(object sender, EventArgs e)
         {
-            dataGridViewX1.Rows.Add();
+            dataGridViewX1.Rows.Add(null, null, false);
             chkError();
             //_Source = new List<TuitionStandardRecord>(_Source);
             //_Source.Add(new TuitionStandardRecord() );
@@ -136,15 +141,7 @@ namespace TuitionSystem.TuitionControls
                 if (!lstStdView.Items.ContainsKey(tsr.TSName))
                     lstStdView.Items.Add(tsr.TSName, tsr.TSName, "");
             lstStdView.ListViewItemSorter = new ListViewItemComparer();
-            btnCopy.Enabled = false;
-            btnDelete.Enabled = false;
-            btnAddItem.Enabled = false;
-            btnSave.Enabled = false;
-            cboDept.Text = null;
-            cboGender.Text = null;
-            cboClassYear.Text = null;
-            txtTSName.Text = "";
-            dataGridViewX1.DataSource = null;
+            lstStdView_SelectedIndexChanged(null, null);
         }
         private void dataGridViewX1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
@@ -165,38 +162,60 @@ namespace TuitionSystem.TuitionControls
         private void chkError()
         {
             bool hasError = false;
-            if (txtTSName.Text == "") { 
+            if (txtTSName.Text == "")
                 hasError = true;
-            }
-            int result;
-            for (int i = dataGridViewX1.Rows.Count - 1; i >= 0; i--)
+
+            bool hasItem = false;
+            foreach (DataGridViewRow row in dataGridViewX1.Rows)
             {
-                if ("" + dataGridViewX1.Rows[i].Cells[1].Value == "")
-                    hasError = true;
-                else
+                if (("" + row.Cells[0].Value) != "" && ("" + row.Cells[2].Value) != "True")
                 {
-                    dataGridViewX1[2, i].ErrorText = "";
-                    dataGridViewX1.UpdateCellErrorText(2, i);
-                    if (!int.TryParse("" + dataGridViewX1[2, i].Value, out result))
+                    int tryParse;
+                    if (int.TryParse(("" + row.Cells[1].Value), out tryParse) && tryParse > 0)
                     {
-                        dataGridViewX1[2, i].ErrorText = "!";
-                        dataGridViewX1.UpdateCellErrorText(2, i);
+                        hasItem = true;
+                    }
+                    else
+                    {
                         hasError = true;
                     }
-                    dataGridViewX1[1, i].ErrorText = "";
-                    dataGridViewX1.UpdateCellErrorText(1, i);
-                    for (int j = i - 1; j >= 0; j--)
-                    {
-                        if (("" + dataGridViewX1.Rows[i].Cells[1].Value).Trim() == ("" + dataGridViewX1.Rows[j].Cells[1].Value).Trim())
-                        {
-                            hasError = true;
-                            dataGridViewX1[1, i].ErrorText = "!";
-                            dataGridViewX1.UpdateCellErrorText(1, i);
-                        }
-                    }
                 }
-
             }
+            if (!hasItem)
+                hasError = true;
+            if (hasError)
+                btnSave.Enabled = false;
+            else
+                btnSave.Enabled = true;
+            //int result;
+            //for (int i = dataGridViewX1.Rows.Count - 1; i >= 0; i--)
+            //{
+            //    if ("" + dataGridViewX1.Rows[i].Cells[1].Value == "")
+            //        hasError = true;
+            //    else
+            //    {
+            //        dataGridViewX1[2, i].ErrorText = "";
+            //        dataGridViewX1.UpdateCellErrorText(2, i);
+            //        if (!int.TryParse("" + dataGridViewX1[2, i].Value, out result))
+            //        {
+            //            dataGridViewX1[2, i].ErrorText = "!";
+            //            dataGridViewX1.UpdateCellErrorText(2, i);
+            //            hasError = true;
+            //        }
+            //        dataGridViewX1[1, i].ErrorText = "";
+            //        dataGridViewX1.UpdateCellErrorText(1, i);
+            //        for (int j = i - 1; j >= 0; j--)
+            //        {
+            //            if (("" + dataGridViewX1.Rows[i].Cells[1].Value).Trim() == ("" + dataGridViewX1.Rows[j].Cells[1].Value).Trim())
+            //            {
+            //                hasError = true;
+            //                dataGridViewX1[1, i].ErrorText = "!";
+            //                dataGridViewX1.UpdateCellErrorText(1, i);
+            //            }
+            //        }
+            //    }
+
+            //}
             //for (int i = 0; i < dataGridViewX1.Rows.Count;i++ )
             //    for (int j= 0; j < dataGridViewX1.Rows.Count; j++)
             //        if (dataGridViewX1.Rows[i].Cells[1].Value.ToString().Trim()==dataGridViewX1.Rows[j].Cells[1].Value.ToString().Trim() && i!=j) 
@@ -205,10 +224,10 @@ namespace TuitionSystem.TuitionControls
             //            dataGridViewX1[1, i].ErrorText = "!";
             //            dataGridViewX1.UpdateCellErrorText(1,i);                    
             //        }
-            if (hasError)
-                btnSave.Enabled = false;
-            else
-                btnSave.Enabled = true;
+            //if (hasError)
+            //    btnSave.Enabled = false;
+            //else
+            //    btnSave.Enabled = true;
 
         }
         void btnCopySemData_Click(object sender, System.EventArgs e)
@@ -284,38 +303,70 @@ namespace TuitionSystem.TuitionControls
         private void btnSave_Click(object sender, EventArgs e)
         {
             dataGridViewX1.EndEdit();
-            dataGridViewX1.CancelEdit();
-            int Money = 0;
-            foreach (TuitionStandardRecord tsr in _Source)
+            foreach (var item in _Source)
             {
-                tsr.SchoolYear = int.Parse(lblSchoolYear.Text);
-                tsr.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
-                tsr.ClassYear = cboClassYear.Text;
-                tsr.Dept = cboDept.Text;
-                tsr.TSName = txtTSName.Text;
-                tsr.Gender = cboGender.Text;
-                Money += tsr.Money;
+                item.Deleted = true;
             }
-            _Source.SaveAll();
-            if (MessageBox.Show("儲存收費標準，是否更改相關資料?", "警告", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            foreach (DataGridViewRow row in dataGridViewX1.Rows)
             {
-                //更改使用到本收費標準的所有繳費表
-                List<StudentTuitionRecord> STRs = StudentTuitionDAO.GetStudentTuitionBySSTName(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTSName.Text);
-                foreach (StudentTuitionRecord sr in STRs)
+                if (("" + row.Cells[0].Value) != "" && ("" + row.Cells[2].Value) != "True")
                 {
-                    if (sr.PayDate != null)
-                        MessageBox.Show("有人使用本收費標準且已註冊，不修改該繳費表");
+                    TuitionStandardRecord rec = null;
+                    if (row.Tag != null)
+                    {
+                        rec = (TuitionStandardRecord)row.Tag;
+                        rec.Deleted = false;
+                    }
                     else
                     {
-                        SetTuition.ChangeTuitionDetail(_Source, sr.UID);
-                        sr.ChangeMoney = SetTuition.ReCalcChangeMoney(sr.UID);
-                        sr.ChargeAmount = Money + sr.ChangeMoney;
-                        sr.UpLoad = false;
+                        rec = new TuitionStandardRecord();
+                        _Source.Add(rec);
                     }
+                    rec.SchoolYear = int.Parse(lblSchoolYear.Text);
+                    rec.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
+                    rec.ClassYear = cboClassYear.Text;
+                    rec.Dept = cboDept.Text;
+                    rec.TSName = txtTSName.Text;
+                    rec.Gender = cboGender.Text;
+                    rec.ChargeItem = "" + row.Cells[0].Value;
+                    rec.Money = int.Parse("" + row.Cells[1].Value);
                 }
-                STRs.SaveAll();
             }
+            _Source.SaveAll();
             RefreshlstStdView();
+            //dataGridViewX1.EndEdit();
+            //dataGridViewX1.CancelEdit();
+            //int Money = 0;
+            //foreach (TuitionStandardRecord tsr in _Source)
+            //{
+            //    tsr.SchoolYear = int.Parse(lblSchoolYear.Text);
+            //    tsr.Semester = (lblSemester.Text == "上學期" ? 1 : 2);
+            //    tsr.ClassYear = cboClassYear.Text;
+            //    tsr.Dept = cboDept.Text;
+            //    tsr.TSName = txtTSName.Text;
+            //    tsr.Gender = cboGender.Text;
+            //    Money += tsr.Money;
+            //}
+            //_Source.SaveAll();
+            //if (MessageBox.Show("儲存收費標準，是否更改相關資料?", "警告", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
+            //    //更改使用到本收費標準的所有繳費表
+            //    List<StudentTuitionRecord> STRs = StudentTuitionDAO.GetStudentTuitionBySSTName(int.Parse(lblSchoolYear.Text), lblSemester.Text, txtTSName.Text);
+            //    foreach (StudentTuitionRecord sr in STRs)
+            //    {
+            //        if (sr.PayDate != null)
+            //            MessageBox.Show("有人使用本收費標準且已註冊，不修改該繳費表");
+            //        else
+            //        {
+            //            SetTuition.ChangeTuitionDetail(_Source, sr.UID);
+            //            sr.ChangeMoney = SetTuition.ReCalcChangeMoney(sr.UID);
+            //            sr.ChargeAmount = Money + sr.ChangeMoney;
+            //            sr.UpLoad = false;
+            //        }
+            //    }
+            //    STRs.SaveAll();
+            //}
+            //RefreshlstStdView();
         }
 
 

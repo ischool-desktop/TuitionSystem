@@ -54,7 +54,7 @@ namespace TuitionSystem
                     //Trace.WriteLine("name:" + assembly.GetName().Name + "  Version.Major:" + assembly.GetName().Version.Major);
                 }
 
-                
+
 
                 //string username = Framework.DSAServices.UserAccount;
                 //List<string> allowusername = new List<string>(new string[] { "emywang", "bw2014", "guest1", "mimimi" });
@@ -85,6 +85,22 @@ namespace TuitionSystem
                 MotherForm.RibbonBarItems["學費", "學費資料管理"]["收費異動維護"].Click += delegate
                 {
                     (new TuitionChangeStdProcess()).ShowDialog();
+                };
+                ribbon = RoleAclSource.Instance["學費"]["學費資料管理"];
+                ribbon.Add(new RibbonFeature("Tuition設定線上輸入時間", "設定線上輸入時間"));
+                MotherForm.RibbonBarItems["學費", "學費資料管理"]["設定線上輸入時間"].Enable = CurrentUser.Acl["Tuition設定線上輸入時間"].Executable;
+                //MotherForm.RibbonBarItems["學費", "學費資料管理"]["設定線上輸入時間"].Image = Properties.Resources.Money;
+                MotherForm.RibbonBarItems["學費", "學費資料管理"]["設定線上輸入時間"].Click += delegate
+                {
+                    (new TuitionChangeInputTime()).ShowDialog();
+                };
+                ribbon = RoleAclSource.Instance["學費"]["學費資料管理"];
+                ribbon.Add(new RibbonFeature("Tuition計算繳費金額", "計算繳費金額"));
+                MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Enable = false;// CurrentUser.Acl["Tuition計算繳費金額"].Executable;
+                //MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Image = Properties.Resources.Money;
+                MotherForm.RibbonBarItems["學費", "學費資料管理"]["計算繳費金額"].Click += delegate
+                {
+                    //(new TuitionChangeInputTime()).ShowDialog();
                 };
                 //}
                 //ribbon = RoleAclSource.Instance["學費"]["學費資料管理"];
@@ -138,7 +154,7 @@ namespace TuitionSystem
                 //{
                 //    (new TuitionDetailSheet()).ShowDialog();
                 //};
-                MenuButton rbi6=null;
+                MenuButton rbi6 = null;
                 if (isAE)
                     rbi6 = K12.Presentation.NLDPanels.Class.RibbonBarItems["資料統計"]["報表"]["總務相關報表"]["繳費明細單"];
                 else
@@ -202,7 +218,7 @@ namespace TuitionSystem
                 MenuButton rbi13 = null;
                 if (isAE)
                     rbi13 = K12.Presentation.NLDPanels.Class.RibbonBarItems["資料統計"]["報表"]["總務相關報表"]["各項繳費及異動項目統計清冊"];
-                else                
+                else
                     rbi13 = K12.Presentation.NLDPanels.Class.RibbonBarItems["統計報表"]["報表"]["總務相關報表"]["各項繳費及異動項目統計清冊"];
                 rbi13.Enable = CurrentUser.Acl["Tuition012"].Executable;
                 rbi13.Click += delegate
@@ -422,7 +438,7 @@ namespace TuitionSystem
                     //在學生增加一欄收費標準
                     nameField = new ListPaneField("收費標準");
                     Dictionary<string, StudentTuitionRecord> items2 = new Dictionary<string, StudentTuitionRecord>();
-                    nameField.PreloadVariableBackground += delegate(object sender, PreloadVariableEventArgs e)
+                    nameField.PreloadVariableBackground += delegate (object sender, PreloadVariableEventArgs e)
                     {
                         items2.Clear();
                         List<string> ids = new List<string>();
@@ -431,10 +447,10 @@ namespace TuitionSystem
                         foreach (var item in StudentTuitionDAO.GetStudentTuitionBySSTSL(GlobalValue.CurrentSchoolYear, GlobalValue.CurrentSemester, "舊生", ids))
                         {
                             if (!items2.ContainsKey(item.TuitionUID))
-                            items2.Add(item.TuitionUID, item);
+                                items2.Add(item.TuitionUID, item);
                         }
                     };
-                    nameField.GetVariable += delegate(object sender, GetVariableEventArgs e)
+                    nameField.GetVariable += delegate (object sender, GetVariableEventArgs e)
                     {
                         if (items2.ContainsKey(e.Key))
                             e.Value = items2[e.Key].TSName;
@@ -443,18 +459,18 @@ namespace TuitionSystem
                     };
                     nameField.MinimumWidth = 120;
                     K12.Presentation.NLDPanels.Student.AddListPaneField(nameField);
-                    DataChanged += delegate(object sender, Program.DataChangedEventArgs e)
+                    DataChanged += delegate (object sender, Program.DataChangedEventArgs e)
                     {
                         nameField.Reload();
                     };
-                    TuitionChanged += delegate(object sender, EventArgs e)
+                    TuitionChanged += delegate (object sender, EventArgs e)
                     {
                         nameField.Reload();
                     };
                     //在學生增加一欄應繳金額
                     ListPaneField nameField1 = new ListPaneField("應繳金額");
                     Dictionary<string, StudentTuitionRecord> items3 = new Dictionary<string, StudentTuitionRecord>();
-                    nameField1.PreloadVariableBackground += delegate(object sender, PreloadVariableEventArgs e)
+                    nameField1.PreloadVariableBackground += delegate (object sender, PreloadVariableEventArgs e)
                     {
                         items3.Clear();
                         List<string> ids = new List<string>();
@@ -472,7 +488,7 @@ namespace TuitionSystem
                             }
                         }
                     };
-                    nameField1.GetVariable += delegate(object sender, GetVariableEventArgs e)
+                    nameField1.GetVariable += delegate (object sender, GetVariableEventArgs e)
                     {
                         if (items3.ContainsKey(e.Key))
                             e.Value = items3[e.Key].ChargeAmount;
@@ -481,17 +497,17 @@ namespace TuitionSystem
                     };
                     nameField1.MinimumWidth = 120;
                     K12.Presentation.NLDPanels.Student.AddListPaneField(nameField1);
-                    DataChanged += delegate(object sender, Program.DataChangedEventArgs e)
+                    DataChanged += delegate (object sender, Program.DataChangedEventArgs e)
                     {
                         nameField1.Reload();
                     };
-                    TuitionChanged += delegate(object sender, EventArgs e)
+                    TuitionChanged += delegate (object sender, EventArgs e)
                     {
                         nameField1.Reload();
                     };
                 }
                 ribbon = RoleAclSource.Instance["學費"]["學費基本資料"];
-                ribbon.Add(new RibbonFeature("Tuition026", "刪除繳費表"));              
+                ribbon.Add(new RibbonFeature("Tuition026", "刪除繳費表"));
                 ribbon = RoleAclSource.Instance["學費"]["報表及統計"];
                 ribbon.Add(new RibbonFeature("Tuition027", "繳費明細資料匯出"));
                 MenuButton rbi31 = null;
@@ -627,12 +643,12 @@ namespace TuitionSystem
         //                    mBKW.PackageSize = 10;
         //                    mBKW.RunWorkerAsync(nsrs);
         //                }
-                        
+
         //            };
         //        }
         //    }
         //}
-        
+
         //static void rbi3_PopupOpen(object sender, PopupOpenEventArgs e)
         //{
         //    List<TuitionStandardRecord> tsrs = TuitionStandardDAO.GetTuitionStandardBySS(GlobalValue.CurrentSchoolYear, GlobalValue.CurrentSemester);
@@ -713,7 +729,7 @@ namespace TuitionSystem
         //            }
         //        };
         //    }
-                    
+
         //}
         static bool rbi2FunctionOnProcess = false;  //預防使用者連按二次
         static void rbi2_PopupOpen(object sender, PopupOpenEventArgs e)
@@ -733,12 +749,12 @@ namespace TuitionSystem
                     if (botton.Count == 1)
                         btn1.BeginGroup = true;
                     btn1.Text = tcsr.TCSName;  //在click 的event handler 中可以識別要處理的對象              
-                    btn1.Click += delegate(Object sender1, EventArgs e1)
+                    btn1.Click += delegate (Object sender1, EventArgs e1)
                     {
                         if (rbi2FunctionOnProcess)
                             return;
                         else
-                            rbi2FunctionOnProcess=true;
+                            rbi2FunctionOnProcess = true;
                         MenuButton btn = (MenuButton)sender1;
                         List<SHStudentRecord> nsrs = SHStudent.SelectByIDs(K12.Presentation.NLDPanels.Student.SelectedSource);
                         List<string> pks = new List<string>();
@@ -746,8 +762,8 @@ namespace TuitionSystem
                         foreach (SHStudentRecord nsr in nsrs)
                             pks.Add(nsr.ID);
                         //取得繳費表
-                        List<StudentTuitionRecord> studentTus = StudentTuitionDAO.GetStudentTuitionBySSTSL(GlobalValue.CurrentSchoolYear, GlobalValue.CurrentSemester, "舊生",pks);
-                        foreach(StudentTuitionRecord sr in studentTus)
+                        List<StudentTuitionRecord> studentTus = StudentTuitionDAO.GetStudentTuitionBySSTSL(GlobalValue.CurrentSchoolYear, GlobalValue.CurrentSemester, "舊生", pks);
+                        foreach (StudentTuitionRecord sr in studentTus)
                             if (!strList.ContainsKey(sr.TuitionUID))
                             {
                                 strList.Add(sr.TuitionUID, new List<StudentTuitionRecord>());
@@ -788,7 +804,7 @@ namespace TuitionSystem
                         {
                             Framework.MultiThreadBackgroundWorker<SHStudentRecord> mBKW = new Framework.MultiThreadBackgroundWorker<SHStudentRecord>();
                             FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定異動標準...", 0);
-                            mBKW.DoWork += delegate(object sender2, Framework.PackageDoWorkEventArgs<SHStudentRecord> e2)
+                            mBKW.DoWork += delegate (object sender2, Framework.PackageDoWorkEventArgs<SHStudentRecord> e2)
                             {
                                 lock (mBKW)
                                 {
@@ -802,20 +818,20 @@ namespace TuitionSystem
                                             else
                                             {
                                                 pks.Add(nsr.ID);
-                                                if (strList[nsr.ID][0].PayDate == null)                                               
-                                                   if (!SetTuition.SetChangeStd(tsrList[strList[nsr.ID][0].TSName], btn.Text, strList[nsr.ID][0]))
-                                                      MessageBox.Show(nsr.StudentNumber + nsr.Name + "異動標準設定不成功");
+                                                if (strList[nsr.ID][0].PayDate == null)
+                                                    if (!SetTuition.SetChangeStd(tsrList[strList[nsr.ID][0].TSName], btn.Text, strList[nsr.ID][0]))
+                                                        MessageBox.Show(nsr.StudentNumber + nsr.Name + "異動標準設定不成功");
                                             }
                                         }
 
                                     }
                                 }
                             };
-                            mBKW.ProgressChanged += delegate(object sender3, ProgressChangedEventArgs e3)
+                            mBKW.ProgressChanged += delegate (object sender3, ProgressChangedEventArgs e3)
                             {
                                 FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定異動標準...", e3.ProgressPercentage);
                             };
-                            mBKW.RunWorkerCompleted += delegate(object sender4, RunWorkerCompletedEventArgs e4)
+                            mBKW.RunWorkerCompleted += delegate (object sender4, RunWorkerCompletedEventArgs e4)
                             {
                                 if (DataChanged != null)
                                     DataChanged(null, new DataChangedEventArgs(pks));
@@ -827,7 +843,7 @@ namespace TuitionSystem
                             mBKW.PackageSize = 10;
                             mBKW.RunWorkerAsync(nsrs);
                         }
-                        
+
                     };
                 }
             }
@@ -845,7 +861,7 @@ namespace TuitionSystem
         static internal void OnTuitionChanged()
         {
             if (TuitionChanged != null)
-                TuitionChanged(null, new EventArgs());            
+                TuitionChanged(null, new EventArgs());
         }
         static void rbi1_PopupOpen(object sender, PopupOpenEventArgs e)
         {
@@ -857,9 +873,9 @@ namespace TuitionSystem
             //int nowSet = 0;
             List<string> deptname = new List<string>();
             List<SHStudentRecord> nsrs = SHStudent.SelectByIDs(K12.Presentation.NLDPanels.Student.SelectedSource);
-            string dept="";
+            string dept = "";
             //找出所有學生科別
-     
+
             foreach (SHStudentRecord nsr in nsrs)
             {
                 if (nsr.Department != null)
@@ -869,24 +885,24 @@ namespace TuitionSystem
                         deptname.Add(dept);
                 }
             }
-        
+
 
             foreach (TuitionStandardRecord tsr in tsrs)
-            {                
-               if (!botton.Contains(tsr.TSName))
-                    if (deptname.Contains(tsr.Dept))                    
-                       botton.Add(tsr.TSName);
+            {
+                if (!botton.Contains(tsr.TSName))
+                    if (deptname.Contains(tsr.Dept))
+                        botton.Add(tsr.TSName);
             }
             foreach (string TSName in botton)
             {
-                    var btn1 = e.VirtualButtons[TSName];
-                    if (botton.Count == 1)
-                        btn1.BeginGroup = true;
-                    btn1.Text = TSName;  //在click 的event handler 中可以識別要處理的對象              
-                    btn1.Click += delegate(Object sender1, EventArgs e1)
-                    {
-                        MenuButton btn = (MenuButton)sender1;                        
-                        List<string> pks = new List<string>();
+                var btn1 = e.VirtualButtons[TSName];
+                if (botton.Count == 1)
+                    btn1.BeginGroup = true;
+                btn1.Text = TSName;  //在click 的event handler 中可以識別要處理的對象              
+                btn1.Click += delegate (Object sender1, EventArgs e1)
+                {
+                    MenuButton btn = (MenuButton)sender1;
+                    List<string> pks = new List<string>();
                         //foreach (SHStudentRecord nsr in nsrs)
                         //{
                         //    MotherForm.SetStatusBarMessage("正在設定收費標準", (nowSet++ * 100 / nsrs.Count));
@@ -903,42 +919,42 @@ namespace TuitionSystem
                         //    DataChanged(null, new DataChangedEventArgs(pks));
                         //MessageBox.Show("設定完成");
                         {
-                            Framework.MultiThreadBackgroundWorker<SHStudentRecord> mBKW = new Framework.MultiThreadBackgroundWorker<SHStudentRecord>();
-                            FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定收費標準...", 0);
-                            mBKW.DoWork += delegate(object sender2, Framework.PackageDoWorkEventArgs<SHStudentRecord> e2)
+                        Framework.MultiThreadBackgroundWorker<SHStudentRecord> mBKW = new Framework.MultiThreadBackgroundWorker<SHStudentRecord>();
+                        FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定收費標準...", 0);
+                        mBKW.DoWork += delegate (object sender2, Framework.PackageDoWorkEventArgs<SHStudentRecord> e2)
+                        {
+                            lock (mBKW)
                             {
-                                lock (mBKW)
+                                foreach (SHStudentRecord nsr in e2.Items)
                                 {
-                                    foreach (SHStudentRecord nsr in e2.Items)
+                                    if (nsr.Status == SHStudentRecord.StudentStatus.一般 && (!pks.Contains(nsr.ID)))
                                     {
-                                        if (nsr.Status == SHStudentRecord.StudentStatus.一般 && (!pks.Contains(nsr.ID)))
-                                        {
-                                            if (!SetTuition.SetTuitionStandard("舊生", btn.Text, nsr.ID.ToString(), nsr.Gender))
-                                                MessageBox.Show(nsr.StudentNumber + nsr.Name + "收費標準設定不成功");
-                                            pks.Add(nsr.ID);
-                                        }
+                                        if (!SetTuition.SetTuitionStandard("舊生", btn.Text, nsr.ID.ToString(), nsr.Gender))
+                                            MessageBox.Show(nsr.StudentNumber + nsr.Name + "收費標準設定不成功");
+                                        pks.Add(nsr.ID);
                                     }
                                 }
-                            };
-                            mBKW.ProgressChanged += delegate(object sender3, ProgressChangedEventArgs e3)
-                            {
-                                FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定收費標準...", e3.ProgressPercentage);
-                            };
-                            mBKW.RunWorkerCompleted += delegate(object sender4, RunWorkerCompletedEventArgs e4)
-                            {
-                                if (DataChanged != null)
-                                    DataChanged(null, new DataChangedEventArgs(pks));
-                                FISCA.Presentation.MotherForm.SetStatusBarMessage("");
-                                MessageBox.Show("設定完成");
-                            };
+                            }
+                        };
+                        mBKW.ProgressChanged += delegate (object sender3, ProgressChangedEventArgs e3)
+                        {
+                            FISCA.Presentation.MotherForm.SetStatusBarMessage("正在設定收費標準...", e3.ProgressPercentage);
+                        };
+                        mBKW.RunWorkerCompleted += delegate (object sender4, RunWorkerCompletedEventArgs e4)
+                        {
+                            if (DataChanged != null)
+                                DataChanged(null, new DataChangedEventArgs(pks));
+                            FISCA.Presentation.MotherForm.SetStatusBarMessage("");
+                            MessageBox.Show("設定完成");
+                        };
                             //設定包的大小,1為人數
                             mBKW.PackageSize = 10;
-                            mBKW.RunWorkerAsync(nsrs);
-                        }
-                    };
-               }
-                   
-         }
+                        mBKW.RunWorkerAsync(nsrs);
+                    }
+                };
+            }
+
+        }
 
         //空白Division
         public class 學費Division : IBlankPanel

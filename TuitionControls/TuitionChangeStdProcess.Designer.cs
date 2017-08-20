@@ -46,6 +46,10 @@
             this.btnAddItem = new DevComponents.DotNetBar.ButtonX();
             this.btnSave = new DevComponents.DotNetBar.ButtonX();
             this.groupPanel1 = new DevComponents.DotNetBar.Controls.GroupPanel();
+            this.comboBoxEx2 = new DevComponents.DotNetBar.Controls.ComboBoxEx();
+            this.comboItem5 = new DevComponents.Editors.ComboItem();
+            this.comboItem6 = new DevComponents.Editors.ComboItem();
+            this.labelX5 = new DevComponents.DotNetBar.LabelX();
             this.comboBoxEx1 = new DevComponents.DotNetBar.Controls.ComboBoxEx();
             this.comboItem3 = new DevComponents.Editors.ComboItem();
             this.comboItem4 = new DevComponents.Editors.ComboItem();
@@ -201,11 +205,11 @@
             this.dataGridViewX1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.dataGridViewX1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(215)))), ((int)(((byte)(229)))));
             this.dataGridViewX1.HighlightSelectedColumnHeaders = false;
-            this.dataGridViewX1.Location = new System.Drawing.Point(5, 91);
+            this.dataGridViewX1.Location = new System.Drawing.Point(5, 120);
             this.dataGridViewX1.Name = "dataGridViewX1";
             this.dataGridViewX1.RowHeadersVisible = false;
             this.dataGridViewX1.RowTemplate.Height = 24;
-            this.dataGridViewX1.Size = new System.Drawing.Size(456, 307);
+            this.dataGridViewX1.Size = new System.Drawing.Size(456, 278);
             this.dataGridViewX1.TabIndex = 4;
             this.dataGridViewX1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewX1_CellEndEdit);
             this.dataGridViewX1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridViewX1_DataError);
@@ -273,6 +277,8 @@
             this.groupPanel1.BackColor = System.Drawing.Color.Transparent;
             this.groupPanel1.CanvasColor = System.Drawing.SystemColors.Control;
             this.groupPanel1.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.Office2007;
+            this.groupPanel1.Controls.Add(this.comboBoxEx2);
+            this.groupPanel1.Controls.Add(this.labelX5);
             this.groupPanel1.Controls.Add(this.comboBoxEx1);
             this.groupPanel1.Controls.Add(this.checkBoxX2);
             this.groupPanel1.Controls.Add(this.checkBoxX1);
@@ -321,6 +327,48 @@
             this.groupPanel1.StyleMouseOver.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.groupPanel1.TabIndex = 4;
             // 
+            // comboBoxEx2
+            // 
+            this.comboBoxEx2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxEx2.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.comboBoxEx2.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.comboBoxEx2.DisplayMember = "Text";
+            this.comboBoxEx2.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.comboBoxEx2.FormattingEnabled = true;
+            this.comboBoxEx2.ItemHeight = 19;
+            this.comboBoxEx2.Items.AddRange(new object[] {
+            this.comboItem5,
+            this.comboItem6});
+            this.comboBoxEx2.Location = new System.Drawing.Point(79, 33);
+            this.comboBoxEx2.Name = "comboBoxEx2";
+            this.comboBoxEx2.Size = new System.Drawing.Size(191, 25);
+            this.comboBoxEx2.TabIndex = 22;
+            this.comboBoxEx2.TextChanged += new System.EventHandler(this.txt_TextChanged);
+            // 
+            // comboItem5
+            // 
+            this.comboItem5.Text = "＋";
+            // 
+            // comboItem6
+            // 
+            this.comboItem6.Text = "－";
+            // 
+            // labelX5
+            // 
+            this.labelX5.AutoSize = true;
+            this.labelX5.BackColor = System.Drawing.Color.Transparent;
+            // 
+            // 
+            // 
+            this.labelX5.BackgroundStyle.Class = "";
+            this.labelX5.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
+            this.labelX5.Location = new System.Drawing.Point(5, 35);
+            this.labelX5.Name = "labelX5";
+            this.labelX5.Size = new System.Drawing.Size(74, 21);
+            this.labelX5.TabIndex = 23;
+            this.labelX5.Text = "管理教師：";
+            // 
             // comboBoxEx1
             // 
             this.comboBoxEx1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -333,7 +381,7 @@
             this.comboBoxEx1.Items.AddRange(new object[] {
             this.comboItem3,
             this.comboItem4});
-            this.comboBoxEx1.Location = new System.Drawing.Point(270, 33);
+            this.comboBoxEx1.Location = new System.Drawing.Point(273, 62);
             this.comboBoxEx1.Name = "comboBoxEx1";
             this.comboBoxEx1.Size = new System.Drawing.Size(191, 25);
             this.comboBoxEx1.TabIndex = 3;
@@ -359,7 +407,7 @@
             this.checkBoxX2.Checked = true;
             this.checkBoxX2.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxX2.CheckValue = "Y";
-            this.checkBoxX2.Location = new System.Drawing.Point(5, 64);
+            this.checkBoxX2.Location = new System.Drawing.Point(5, 93);
             this.checkBoxX2.Name = "checkBoxX2";
             this.checkBoxX2.Size = new System.Drawing.Size(134, 21);
             this.checkBoxX2.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -376,7 +424,7 @@
             this.checkBoxX1.BackgroundStyle.Class = "";
             this.checkBoxX1.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
             this.checkBoxX1.CheckBoxStyle = DevComponents.DotNetBar.eCheckBoxStyle.RadioButton;
-            this.checkBoxX1.Location = new System.Drawing.Point(5, 35);
+            this.checkBoxX1.Location = new System.Drawing.Point(5, 64);
             this.checkBoxX1.Name = "checkBoxX1";
             this.checkBoxX1.Size = new System.Drawing.Size(121, 21);
             this.checkBoxX1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
@@ -391,7 +439,7 @@
             // 
             this.txtMoney.Border.Class = "TextBoxBorder";
             this.txtMoney.Border.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.txtMoney.Location = new System.Drawing.Point(126, 33);
+            this.txtMoney.Location = new System.Drawing.Point(126, 62);
             this.txtMoney.Name = "txtMoney";
             this.txtMoney.Size = new System.Drawing.Size(73, 25);
             this.txtMoney.TabIndex = 2;
@@ -406,7 +454,7 @@
             // 
             this.labelX3.BackgroundStyle.Class = "";
             this.labelX3.BackgroundStyle.CornerType = DevComponents.DotNetBar.eCornerType.Square;
-            this.labelX3.Location = new System.Drawing.Point(199, 35);
+            this.labelX3.Location = new System.Drawing.Point(199, 64);
             this.labelX3.Name = "labelX3";
             this.labelX3.Size = new System.Drawing.Size(74, 21);
             this.labelX3.TabIndex = 19;
@@ -463,6 +511,7 @@
             this.lstStdView.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lstStdView.ForeColor = System.Drawing.SystemColors.ControlText;
             this.lstStdView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstStdView.HideSelection = false;
             this.lstStdView.Location = new System.Drawing.Point(8, 39);
             this.lstStdView.MultiSelect = false;
             this.lstStdView.Name = "lstStdView";
@@ -543,5 +592,9 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn ChargeItem;
         private System.Windows.Forms.DataGridViewTextBoxColumn Percent;
         private System.Windows.Forms.DataGridViewCheckBoxColumn 刪除;
+        private DevComponents.DotNetBar.Controls.ComboBoxEx comboBoxEx2;
+        private DevComponents.Editors.ComboItem comboItem5;
+        private DevComponents.Editors.ComboItem comboItem6;
+        private DevComponents.DotNetBar.LabelX labelX5;
     }
 }
